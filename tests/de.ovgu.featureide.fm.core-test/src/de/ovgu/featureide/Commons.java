@@ -1,5 +1,5 @@
 /* FeatureIDE - A Framework for Feature-Oriented Software Development
- * Copyright (C) 2005-2017  FeatureIDE team, University of Magdeburg, Germany
+ * Copyright (C) 2005-2019  FeatureIDE team, University of Magdeburg, Germany
  *
  * This file is part of FeatureIDE.
  *
@@ -20,13 +20,20 @@
  */
 package de.ovgu.featureide;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileFilter;
+import java.nio.file.Path;
 import java.util.List;
 
 import de.ovgu.featureide.fm.core.base.IFeatureModel;
-import de.ovgu.featureide.fm.core.base.impl.FMFactoryManager;
+import de.ovgu.featureide.fm.core.init.FMCoreLibrary;
+import de.ovgu.featureide.fm.core.init.LibraryManager;
+import de.ovgu.featureide.fm.core.io.IPersistentFormat;
+import de.ovgu.featureide.fm.core.io.ProblemList;
 import de.ovgu.featureide.fm.core.io.manager.FeatureModelManager;
+import de.ovgu.featureide.fm.core.io.manager.SimpleFileHandler;
 
 /**
  * A class containing numerous methods that are needed for many tests, especially those assessing files.
@@ -36,9 +43,12 @@ import de.ovgu.featureide.fm.core.io.manager.FeatureModelManager;
  */
 public class Commons {
 
+	static {
+		LibraryManager.registerLibrary(FMCoreLibrary.getInstance());
+	}
+
 	public static File getRemoteOrLocalFolder(String path) {
-		final File folder = new File("src/" + path);
-		return folder;
+		return new File("src/" + path);
 	}
 
 	private static final String BENCHMARK_FEATURE_MODEL_PATH = "benchmarkFeatureModels/";
@@ -99,10 +109,11 @@ public class Commons {
 	public final static IFeatureModel loadFeatureModelFromFile(final String featureModelXmlFilename, final FileFilter filter, final File modelFolder) {
 		for (final File f : modelFolder.listFiles(filter)) {
 			if (f.getName().equals(featureModelXmlFilename)) {
-				return FeatureModelManager.load(f.toPath()).getObject();
+				return FeatureModelManager.load(f.toPath());
 			}
 		}
-		return FMFactoryManager.getEmptyFeatureModel();
+		fail();
+		return null;
 	}
 
 	public final static <T> String join(T delimiter, List<T> list) {
@@ -142,6 +153,14 @@ public class Commons {
 		public boolean accept(final File pathname) {
 			return pathname.getName().endsWith("." + fileExtension);
 		}
+	}
+
+	public static ProblemList loadFeatureModel(Path modelFile, IFeatureModel model, IPersistentFormat<IFeatureModel> format) {
+		return SimpleFileHandler.load(modelFile, model, format);
+	};
+
+	public static ProblemList saveFeatureModel(Path modelFile, IFeatureModel model, IPersistentFormat<IFeatureModel> format) {
+		return SimpleFileHandler.save(modelFile, model, format);
 	};
 
 }

@@ -1,3 +1,23 @@
+/* FeatureIDE - A Framework for Feature-Oriented Software Development
+ * Copyright (C) 2005-2019  FeatureIDE team, University of Magdeburg, Germany
+ *
+ * This file is part of FeatureIDE.
+ *
+ * FeatureIDE is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * FeatureIDE is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with FeatureIDE.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * See http://featureide.cs.ovgu.de/ for further information.
+ */
 package de.ovgu.featureide.fm.attributes.view.labelprovider;
 
 import java.util.HashMap;
@@ -24,7 +44,7 @@ import de.ovgu.featureide.fm.core.color.FeatureColorManager;
 public abstract class FeatureAttributeColumnLabelProvider extends ColumnLabelProvider implements IColorProvider {
 
 	protected HashMap<String, Image> cachedImages;
-	private FeatureAttributeView view;
+	protected FeatureAttributeView view;
 
 	public FeatureAttributeColumnLabelProvider(HashMap<String, Image> cachedImages, FeatureAttributeView view) {
 		this.cachedImages = cachedImages;
@@ -37,35 +57,13 @@ public abstract class FeatureAttributeColumnLabelProvider extends ColumnLabelPro
 		if (element instanceof IFeatureAttribute) {
 			IFeatureAttribute attribute = (IFeatureAttribute) element;
 			IFeature feature = attribute.getFeature();
-			if (view.selection != null && view.selection.contains(feature)) {
-				return ColorPalette.toSwtColor(FeatureColor.Red);
-			}
-			if (view.selectedAutomaticFeatures == null || view.selectedManualFeatures == null) {
-				final FeatureColor featureColor = FeatureColorManager.getColor(feature);
-				return ColorPalette.toSwtColor(featureColor);
-			} else {
-				if (!view.selectedManualFeatures.contains(feature)) {
-					return ColorPalette.toSwtColor(FeatureColor.Light_Gray);
-				} else {
-					return ColorPalette.toSwtColor(FeatureColor.Light_Green);
-				}
-			}
+			final FeatureColor featureColor = FeatureColorManager.getColor(feature);
+			return ColorPalette.toSwtColor(featureColor);
 		}
 		if (element instanceof IFeature) {
 			IFeature feature = (IFeature) element;
-			if (view.selection != null && view.selection.contains(feature)) {
-				return ColorPalette.toSwtColor(FeatureColor.Red);
-			}
-			if (view.selectedAutomaticFeatures == null || view.selectedManualFeatures == null) {
-				final FeatureColor featureColor = FeatureColorManager.getColor(feature);
-				return ColorPalette.toSwtColor(featureColor);
-			} else {
-				if (!view.selectedManualFeatures.contains(feature)) {
-					return ColorPalette.toSwtColor(FeatureColor.Light_Gray);
-				} else {
-					return ColorPalette.toSwtColor(FeatureColor.Light_Green);
-				}
-			}
+			final FeatureColor featureColor = FeatureColorManager.getColor(feature);
+			return ColorPalette.toSwtColor(featureColor);
 		}
 		return null;
 	}
